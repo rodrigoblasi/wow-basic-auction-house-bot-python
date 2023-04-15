@@ -25,6 +25,11 @@ This is a basic Python bot designed to interact with the World of Warcraft (WoW)
 
 This project is open to suggestions, improvements, and contributions from the community. Feel free to submit issues, pull requests, or contact the developer with your ideas.
 
+## Contact
+
+- Personal website: [blasi.io](https://blasi.io)
+- Twitter: [@RodrigoBlasi](https://twitter.com/rodrigoblasi)
+
 ## Disclaimer
 
 This project is for educational and research purposes only. The use of bots in World of Warcraft is against the game's terms of service, and using this bot may result in penalties, including account suspension or ban. By using this bot, you acknowledge these risks and agree that the developer is not responsible for any consequences arising from its use.
