@@ -1,4 +1,4 @@
-# Basic WoW Auction House Python Bot
+# Basic World of Warcraft Auction House Python Bot
 
 This is a basic Python bot designed to interact with the World of Warcraft (WoW) Auction House using the TradeSkillMaster (TSM) addon. 
 *This bot is intended for study and research purposes only, this bot is created by a non-professional developer, who is an enthusiast and student of automation.*
