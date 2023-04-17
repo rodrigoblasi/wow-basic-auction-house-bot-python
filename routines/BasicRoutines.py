@@ -7,6 +7,7 @@ import win32api
 import time
 import win32con
 from .utils.log_setup import setup_logging
+from .utils.utilities import CriticalError
 
 #log setup from /routines/utils/log_setup.py#
 setup_logging()
@@ -44,23 +45,24 @@ def BasicRoutineGetInfoAllWowWindows():
             hwnd = win32gui.FindWindowEx(None, hwnd, None, None)  # Obtém o identificador da próxima janela
     return wow_windows  # Retorna o dicionário com as informações das janelas do WoW
 
-def BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,mouse_button, window_number, x, y, click_count):
+async def BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,mouse_button, window_number, x, y, click_count):
+    thisroutinename = "BasicRoutineSendMouseClickAllWowWindows"
     logging.debug("[BasicRoutineSendMouseClickAllWowWindows] Debug mode enabled")    
     if not isinstance(mouse_button, str) or mouse_button.lower() not in ["left", "right"]:
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] botão do mouse inválido. Use 'left' ou 'right'.")
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = Botão do mouse inválido. Use 'left' ou 'right'.")
         return False
     if not isinstance(window_number, int) or not (1 <= window_number <= 99):
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] número de janela inválido. Use um número entre 1 e 99.")
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = Número de janela inválido. Use um número entre 1 e 99.")
         return False
     if not isinstance(x, int) or not isinstance(y, int):
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] coordenadas x e y inválidas. Ambas devem ser números inteiros.")
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = Coordenadas x e y inválidas. Ambas devem ser números inteiros.")
         return False
     if not isinstance(click_count, int) or not (1 <= click_count <= 99):
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] número de cliques inválido. Use um número entre 1 e 99.")
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = Número de cliques inválido. Use um número entre 1 e 99.")
         return False
     wow_windows = BasicRoutineGetInfoAllWowWindows()
     if window_number not in wow_windows:
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] a janela {window_number} não foi encontrada.")
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = A janela {window_number} não foi encontrada.")
         return False
     mouse_button_event = win32con.MOUSEEVENTF_LEFTDOWN if mouse_button.lower() == "left" else win32con.MOUSEEVENTF_RIGHTDOWN
     mouse_button_event_up = win32con.MOUSEEVENTF_LEFTUP if mouse_button.lower() == "left" else win32con.MOUSEEVENTF_RIGHTUP
@@ -80,21 +82,22 @@ def BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,mouse_button, wi
         win32api.SetCursorPos(initial_mouse_pos)
         return True
 
-def BasicRoutineSendKeyAllWowWindows(whocallthisfunction,window_number, key, key_press_count):
+async def BasicRoutineSendKeyAllWowWindows(whocallthisfunction,window_number, key, key_press_count):
+    thisroutinename = "BasicRoutineSendKeyAllWowWindows"
     logging.debug("[BasicRoutineSendKeyAllWowWindows] Debug mode enabled")
     if not isinstance(window_number, int) or not (1 <= window_number <= 99):
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] número de janela inválido. Use um número entre 1 e 99.")
-        return
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = Número de janela inválido. Use um número entre 1 e 99.")
+        return False
     if not isinstance(key, str) or (len(key) != 1 and key not in ['ESC', 'SPACE']):
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] a tecla deve ser uma única letra, número, ESC ou SPACE.")
-        return
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = A tecla deve ser uma única letra, número, ESC ou SPACE.")
+        return False
     if not isinstance(key_press_count, int) or not (1 <= key_press_count <= 99):
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] número de pressionamentos de tecla inválido. Use um número entre 1 e 99.")
-        return
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = Número de pressionamentos de tecla inválido. Use um número entre 1 e 99.")
+        return False
     wow_windows = BasicRoutineGetInfoAllWowWindows()
     if window_number not in wow_windows:
-        logging.critical(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] a janela {window_number} não foi encontrada.")
-        return
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = A janela {window_number} não foi encontrada.")
+        return False
     target_window = wow_windows[window_number]
     if key == 'ESC':
         vk_code = win32con.VK_ESCAPE
@@ -119,3 +122,4 @@ def BasicRoutineSendKeyAllWowWindows(whocallthisfunction,window_number, key, key
                 logging.debug(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] Tecla '{key}' enviada para a janela {other_window_number}.")
         loop_count += 1
     logging.debug(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] Tecla '{key}' enviada para todas as janelas {key_press_count} vezes.")
+    return True
