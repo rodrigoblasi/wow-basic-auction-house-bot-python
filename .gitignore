@@ -130,7 +130,8 @@ dmypy.json
 
 .
 Notes - Projeto Python WoW Bot.txt
-moretests.py
-tests.py
-tests copy.PY
-routines/TEST01.PY
+temptests01.py
+temptests02.py
+temptests03.py
+temptests04.py
+temptests05.py

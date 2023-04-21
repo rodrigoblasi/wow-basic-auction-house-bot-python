@@ -3,6 +3,7 @@ import logging
 import asyncio
 import time
 from .BasicRoutines import BasicRoutineSendMouseClickAllWowWindows, BasicRoutineSendKeyAllWowWindows
+from configparser import ConfigParser
 from .utils.log_setup import setup_logging
 from .utils.utilities import CriticalError
 
@@ -10,8 +11,14 @@ from .utils.utilities import CriticalError
 #log setup from /routines/utils/log_setup.py#
 setup_logging()
 
+## PARSING CONFIG FILE ##
+config = ConfigParser()
+config.read('config/config_default.ini')
+
 async def SubRoutineCloseAnyFrame(whocallthisfunction=False):
     thisroutinename = "SubRoutineCloseAnyFrame"
+    ReturnToGameButtonWindow1X = config.getint('SubRoutineCloseAnyFrame', 'ReturnToGameButtonWindow1X')
+    ReturnToGameButtonWindow1Y = config.getint('SubRoutineCloseAnyFrame', 'ReturnToGameButtonWindow1Y')
     logging.info(f"[{whocallthisfunction}]->[SubRoutineCloseAnyFrame] CloseAnyFrame routine")
     logging.debug (f"[{whocallthisfunction}]->[SubRoutineCloseAnyFrame] Debug mode enabled")
     logging.debug(f"[{whocallthisfunction}]->[SubRoutineCloseAnyFrame] Start of Close Any Frame routine")
@@ -22,7 +29,7 @@ async def SubRoutineCloseAnyFrame(whocallthisfunction=False):
         logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}]")
         return False
     logging.debug(f"[{whocallthisfunction}]->[SubRoutineCloseAnyFrame] Click 'Return to game' button if it exists")
-    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, 845, 545, 2)
+    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, ReturnToGameButtonWindow1X, ReturnToGameButtonWindow1Y, 2)
     if not result:
         logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}]")
         return False
