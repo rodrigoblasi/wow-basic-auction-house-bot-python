@@ -1,6 +1,7 @@
 ## routines/MainRoutines.py
 import logging
 import asyncio
+import time
 from .BasicRoutines import BasicRoutineSendMouseClickAllWowWindows, BasicRoutineSendKeyAllWowWindows
 from .SubRoutines import SubRoutineCloseAnyFrame, SubRoutineSetView5, SubRoutineInteractAhNpc, SubRoutineAntiAfk, SubRoutineTsmPostCancelButton
 from configparser import ConfigParser
@@ -23,7 +24,6 @@ async def MainRoutineCollectMail():
     MailboxPositionWindow1y = config.getint('MainRoutineCollectMail', 'MailboxPositionWindow1y')
     TSMOpenAllMailWindow1X = config.getint('MainRoutineCollectMail', 'TSMOpenAllMailWindow1X')
     TSMOpenAllMailWindow1Y = config.getint('MainRoutineCollectMail', 'TSMOpenAllMailWindow1Y')
-    logging.info("------------------------")
     logging.info ("[MainRoutineCollectMail] CollectMails Main Routine")
     logging.debug ("[MainRoutineCollectMail] Debug mode enabled")
     logging.debug("[MainRoutineCollectMail] Start of MainRoutineCollectMail")
@@ -50,9 +50,9 @@ async def MainRoutineCollectMail():
         await asyncio.sleep(1)
         if i % 10 == 0:
             if i != 10 and i !=5 and i !=TimeWaitCollectMails:
-                logging.info (f"[MainRoutineCollectMail] Aguardando {i} Segundos para coletar todos os mails")
-        if i <= 10:
-            logging.info (f"[MainRoutineCollectMail] Aguardando {i} Segundos para coletar todos os mails")
+                logging.info (f"[MainRoutineCollectMail] Waiting {i} Seconds to collect all mails")
+        if i < 10:
+            logging.info (f"[MainRoutineCollectMail] Waiting {i} Seconds to collect all mails")
     logging.debug ("[MainRoutineCollectMail] End of MainRoutineCollectMail")
     return True
 
@@ -65,7 +65,6 @@ async def MainRoutinePostAuctions():
     TSMAuctioningTabWindow1X = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1X')
     TSMAuctioningTabWindow1Y = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1Y')
     TSMAuctioningTabWindow1Y = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1Y')
-    logging.info("------------------------")
     logging.info("[MainRoutinePostAuctions] Post Auctions Main Routine")
     logging.debug ("[MainRoutinePostAuctions] Debug mode enabled")
     logging.debug ("[MainRoutinePostAuctions] Start of MainRoutinePostAuctions")
@@ -92,28 +91,33 @@ async def MainRoutinePostAuctions():
     if not result:
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
-    # Fase TimeWaitCancelScan
-    logging.info (f"[MainRoutinePostAuctions] Aguardando {TimeWaitPostScan} segundos pelo o PostScan")
+    # Fase TimeWaitPostScan
+    logging.info (f"[MainRoutinePostAuctions] Waiting {TimeWaitPostScan} seconds for PostScan")
     for i in range(TimeWaitPostScan, 0, -1):
         await asyncio.sleep(1)
         if i % 5 == 0:
             if i != 10 and i !=5 and i !=TimeWaitPostScan:
-                    logging.info (f"[MainRoutinePostAuctions] Aguardando {i} segundos pelo o PostScan")
+                    logging.info (f"[MainRoutinePostAuctions] Waiting {i} seconds for PostScan")
         if i <= 10:
-            logging.info (f"[MainRoutinePostAuctions] Aguardando {i} segundos pelo o PostScan")
-    # Fase TimeKeepPressingTSMPostCancelButtonForCancel
-    logging.info (f"[MainRoutinePostAuctions] Pressionando o botão TSM Post/Cancel Button por {TimeKeepPressingTSMPostCancelButtonForPost} segundos")
-    for i in range(TimeKeepPressingTSMPostCancelButtonForPost, 0, -1):
+            logging.info (f"[MainRoutinePostAuctions] Waiting {i} seconds for PostScan")
+    # Fase TimeKeepPressingTSMPostCancelButtonForPost
+    logging.info (f"[MainRoutinePostAuctions] Pressing TSM Post/Cancel Button for {TimeKeepPressingTSMPostCancelButtonForPost} seconds")
+    start_time = time.time()
+    last_update_time = 0
+    while time.time() - start_time < TimeKeepPressingTSMPostCancelButtonForPost:
         result = await SubRoutineTsmPostCancelButton(whocallthisfunction)
         if not result:
             logging.critical(f"[{whocallthisfunction}] -> Closing APP")
             return False
-        if i % 10 == 0:
-            if i != 10 and i !=5 and i !=TimeKeepPressingTSMPostCancelButtonForPost:
-                logging.info (f"[MainRoutinePostAuctions] Pressionando o botão TSM Post/Cancel por mais {i} segundos")
-        if i <= 10:
-            logging.info (f"[MainRoutinePostAuctions] Pressionando o botão TSM Post/Cancel por mais {i} segundos")
-    logging.debug (f"[MainRoutinePostAuctions] End of MainRoutinePostAuctions")
+        elapsed_time = time.time() - start_time
+        remaining_time = TimeKeepPressingTSMPostCancelButtonForPost - elapsed_time
+        if 2 <= remaining_time <= 10:
+            logging.info (f"[MainRoutinePostAuctions] {int(remaining_time)} seconds left to press Post/Cancel")
+        elif int(elapsed_time) % 10 == 0 and int(elapsed_time) != last_update_time:
+            last_update_time = int(elapsed_time)
+            logging.info(f"[MainRoutinePostAuctions] {int(remaining_time)} seconds left to press Post/Cancel")
+        await asyncio.sleep(0.2)
+    logging.debug ("[MainRoutinePostAuctions] End of MainRoutinePostAuctions")
     return True
 
 async def MainRoutineCancelScanAuctions():
@@ -124,7 +128,6 @@ async def MainRoutineCancelScanAuctions():
     TSMRunCancelScanButtonWindow1Y = config.getint('MainRoutineCancelScanAuctions', 'TSMRunCancelScanButtonWindow1Y')
     TSMAuctioningTabWindow1X = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1X')
     TSMAuctioningTabWindow1Y = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1Y')
-    logging.info("------------------------")
     logging.info("[MainRoutineCancelScanAuctions] Cancel Auctions Main Routine")
     logging.debug ("[MainRoutineCancelScanAuctions] Debug mode enabled")
     logging.debug ("[MainRoutineCancelScanAuctions] Start of MainRoutineCancelScanAuctions")
@@ -152,25 +155,30 @@ async def MainRoutineCancelScanAuctions():
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
     # Fase TimeWaitCancelScan
-    logging.info (f"[MainRoutineCancelScanAuctions] Esperando {TimeWaitCancelScan} segundos para o CancelScan")
+    logging.info (f"[MainRoutineCancelScanAuctions] Waiting {TimeWaitCancelScan} seconds for CancelScan")
     for i in range(TimeWaitCancelScan, 0, -1):
         await asyncio.sleep(1)
         if i % 10 == 0:
-            if i != 10 and i !=5 and i !=TimeWaitCancelScan:
-                logging.info (f"[MainRoutineCancelScanAuctions] Restam {i} segundos para o CancelScan")
-        if i <= 10:
-            logging.info (f"[MainRoutineCancelScanAuctions] Restam {i} segundos para o CancelScan")
+            if i != 10 and i !=5 and i != TimeWaitCancelScan:
+                logging.info (f"[MainRoutineCancelScanAuctions] {i} seconds left for CancelScan")
+        if i < 10:
+            logging.info (f"[MainRoutineCancelScanAuctions] {i} seconds left for CancelScan")
     # Fase TimeKeepPressingTSMPostCancelButtonForCancel
-    logging.info (f"[MainRoutineCancelScanAuctions] Pressionando o botão TSM Post/Cancel Button por {TimeKeepPressingTSMPostCancelButtonForCancel} segundos")
-    for i in range(TimeKeepPressingTSMPostCancelButtonForCancel, 0, -1):
+    logging.info (f"[MainRoutineCancelScanAuctions] Pressing TSM Post/Cancel Button for {TimeKeepPressingTSMPostCancelButtonForCancel} seconds")
+    start_time = time.time()
+    last_update_time = 0
+    while time.time() - start_time < TimeKeepPressingTSMPostCancelButtonForCancel:
         result = await SubRoutineTsmPostCancelButton(whocallthisfunction)
         if not result:
             logging.critical(f"[{whocallthisfunction}] -> Closing APP")
             return False
-        if i % 10 == 0:
-                if i != 10 and i !=5 and i !=TimeWaitCancelScan:
-                    logging.info (f"[MainRoutineCancelScanAuctions] Restam {i} segundos para pressionar o botão TSM Post/Cancel")
-        if i <= 10:
-            logging.info (f"[MainRoutineCancelScanAuctions] Restam {i} segundos para pressionar o botão TSM Post/Cancel")
+        elapsed_time = time.time() - start_time
+        remaining_time = TimeKeepPressingTSMPostCancelButtonForCancel - elapsed_time
+        if 2 <= remaining_time <= 10:
+            logging.info (f"[MainRoutineCancelScanAuctions] {int(remaining_time)} seconds left to press Post/Cancel")
+        elif int(elapsed_time) % 10 == 0 and int(elapsed_time) != last_update_time:
+            last_update_time = int(elapsed_time)
+            logging.info(f"[MainRoutineCancelScanAuctions] {int(remaining_time)} seconds left to press Post/Cancel")
+        await asyncio.sleep(0.2)
     logging.debug ("[MainRoutineCancelScanAuctions] End of MainRoutineCancelScanAuctions")
     return True

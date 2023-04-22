@@ -23,7 +23,7 @@ async def anti_afk_loop():
                 return
             await asyncio.sleep(300)
         except KeyboardInterrupt:
-            logging.info("Loop anti-afk interrompido pelo usuário")
+            logging.info("Anti-AFK loop interrupted by user ")
             break
 
 async def auctioning_loop():
@@ -58,7 +58,7 @@ async def auctioning_loop():
             logging.info("-----------------------------------")            
             await asyncio.sleep(60)
         except KeyboardInterrupt:
-            logging.info("Loop de leilões interrompido pelo usuário")
+            logging.info("Auctions loop interrupted by user")
             logging.info("-----------------------------------")
             logging.info("-----------------------------------")
             logging.info("-----------------------------------")
@@ -74,7 +74,7 @@ async def main():
         auctioning_task = asyncio.create_task(auctioning_loop())
         await asyncio.gather(afk_task, auctioning_task)
     except KeyboardInterrupt:
-        logging.info("Script interrompido pelo usuário")
+        logging.info("Script interrupted by user")
 
 asyncio.run(main())
 

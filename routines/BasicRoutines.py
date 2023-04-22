@@ -74,8 +74,8 @@ async def BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,mouse_butt
             win32api.SetCursorPos((window_x, window_y))
             for i in range(2):
                 win32api.mouse_event(mouse_button_event, 0, 0, 0, 0)
-            time.sleep(0.1)
-            win32api.mouse_event(mouse_button_event_up, 0, 0, 0, 0)
+                time.sleep(0.1)
+                win32api.mouse_event(mouse_button_event_up, 0, 0, 0, 0)
             time.sleep(0.1)
             logging.debug(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] Clicking with {mouse_button} mouse button in the windows {window_num} at position {window_x - window['x']},{window_y - window['y']}")
         time.sleep(0.5)
@@ -108,9 +108,9 @@ async def BasicRoutineSendKeyAllWowWindows(whocallthisfunction,window_number, ke
         vk_code = win32api.VkKeyScanEx(key, 0)
     def send_key_to_window(window_hwnd):
         win32gui.SendMessage(window_hwnd, win32con.WM_KEYDOWN, vk_code, 0)
-        time.sleep(0.1)
+        #time.sleep(0.1)
         win32gui.SendMessage(window_hwnd, win32con.WM_KEYUP, vk_code, 0)
-        time.sleep(0.1)
+        #time.sleep(0.1)
     loop_count = 0
     while loop_count < key_press_count:
         # Send key to the target window.
@@ -121,6 +121,7 @@ async def BasicRoutineSendKeyAllWowWindows(whocallthisfunction,window_number, ke
             if other_window_number != window_number:
                 send_key_to_window(other_window["hwnd"])
                 logging.debug(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] Key '{key}' sended to window {other_window_number}.")
+        #time.sleep(1)
         loop_count += 1
     logging.debug(f"[{whocallthisfunction}]->[BasicRoutineSendKeyAllWowWindows] Key '{key}' sended to all windows {key_press_count} times.")
     return True
