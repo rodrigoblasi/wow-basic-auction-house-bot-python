@@ -36,6 +36,27 @@ async def SubRoutineCloseAnyFrame(whocallthisfunction=False):
     logging.debug(f"[{whocallthisfunction}]->[SubRoutineCloseAnyFrame] End of CloseAnyFrame routine")
     return True
 
+async def SubRoutineClickMailBox(whocallthisfunction):
+    thisroutinename = "SubRoutineClickMailBox"
+    MailboxPositionWindow1X = config.getint('SubRoutineClickMailBox', 'MailboxPositionWindow1X')
+    MailboxPositionWindow1y = config.getint('SubRoutineClickMailBox', 'MailboxPositionWindow1y')
+    logging.debug (f"[{whocallthisfunction}]->[SubRoutineClickMailBox] Click MailBox")
+    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"right", 1, MailboxPositionWindow1X, MailboxPositionWindow1y, 2)
+    if not result:
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}]")
+        return False
+    return True
+
+async def SubRoutineClickTSMOpenAllMail(whocallthisfunction):
+    thisroutinename = "SubRoutineClickTSMOpenAllMail"
+    TSMOpenAllMailWindow1X = config.getint('SubRoutineClickTSMOpenAllMail', 'TSMOpenAllMailWindow1X')
+    TSMOpenAllMailWindow1y = config.getint('SubRoutineClickTSMOpenAllMail', 'TSMOpenAllMailWindow1y')
+    logging.debug (f"[{whocallthisfunction}]->[SubRoutineClickTSMOpenAllMail] Click TSM 'Open All Mail' Button")
+    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMOpenAllMailWindow1X, TSMOpenAllMailWindow1y, 2)
+    if not result:
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}]")
+        return False
+    return True
 
 async def SubRoutineSetView5(whocallthisfunction=False):
     thisroutinename = "SubRoutineSetView5"
@@ -95,6 +116,36 @@ async def SubRoutineTsmPostCancelButton(whocallthisfunction):
     logging.debug (f"[{whocallthisfunction}]->[SubRoutineTsmPostCancelButton] Pressing 'TSM Post/Cancel macro' key (1)")
     #macro binded on action bar
     result = await BasicRoutineSendKeyAllWowWindows(whocallthisfunction,window_number=1, key='1', key_press_count=1)
+    if not result:
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}]")
+        return False
+    return True
+
+async def SubRoutineTsmClickAuctioningTab(whocallthisfunction):
+    thisroutinename = "SubRoutineTsmClickAuctioningTab"
+    TSMAuctioningTabWindow1X = config.getint('SubRoutineTsmClickAuctioningTab', 'TSMAuctioningTabWindow1X')
+    TSMAuctioningTabWindow1Y = config.getint('SubRoutineTsmClickAuctioningTab', 'TSMAuctioningTabWindow1Y')
+    logging.debug (f"[{whocallthisfunction}]->[SubRoutineTsmClickAuctioningTab] Click TSM 'Auctioning' tab")
+    await (BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMAuctioningTabWindow1X, TSMAuctioningTabWindow1Y, 2))
+    return True
+
+async def SubRoutineTsmClickRunPostScanButton(whocallthisfunction):
+    thisroutinename = "SubRoutineTsmRunPostScanButton"
+    TSMRunPostScanButtonWindow1X = config.getint('SubRoutineTsmClickRunPostScanButton', 'TSMRunPostScanButtonWindow1X')
+    TSMRunPostScanButtonWindow1Y = config.getint('SubRoutineTsmClickRunPostScanButton', 'TSMRunPostScanButtonWindow1Y')
+    logging.debug (f"[{whocallthisfunction}]->[SubRoutineTsmRunPostScanButton] Click TSM 'Run POST Scan' button")
+    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMRunPostScanButtonWindow1X, TSMRunPostScanButtonWindow1Y, 2)
+    if not result:
+        logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}]")
+        return False
+    return True
+
+async def SubRoutineTsmClickRunCancelScanButton(whocallthisfunction):
+    thisroutinename = "SubRoutineTsmRunCancelScanButton"
+    TSMRunCancelScanButtonWindow1X = config.getint('SubRoutineTsmClickRunCancelScanButton', 'TSMRunCancelScanButtonWindow1X')
+    TSMRunCancelScanButtonWindow1Y = config.getint('SubRoutineTsmClickRunCancelScanButton', 'TSMRunCancelScanButtonWindow1Y')
+    logging.debug (f"[{whocallthisfunction}]->[SubRoutineTsmRunPostScanButton] Click TSM 'Run CANCEL Scan' button")
+    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMRunCancelScanButtonWindow1X, TSMRunCancelScanButtonWindow1Y, 2)
     if not result:
         logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}]")
         return False

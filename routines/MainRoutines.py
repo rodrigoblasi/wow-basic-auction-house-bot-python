@@ -2,10 +2,9 @@
 import logging
 import asyncio
 import time
-from .BasicRoutines import BasicRoutineSendMouseClickAllWowWindows, BasicRoutineSendKeyAllWowWindows
-from .SubRoutines import SubRoutineCloseAnyFrame, SubRoutineSetView5, SubRoutineInteractAhNpc, SubRoutineAntiAfk, SubRoutineTsmPostCancelButton
+from routines.SubRoutines import SubRoutineCloseAnyFrame, SubRoutineClickMailBox, SubRoutineClickTSMOpenAllMail, SubRoutineSetView5, SubRoutineInteractAhNpc, SubRoutineTsmPostCancelButton, SubRoutineTsmClickAuctioningTab, SubRoutineTsmClickRunPostScanButton, SubRoutineTsmClickRunCancelScanButton
 from configparser import ConfigParser
-from .utils.log_setup import setup_logging
+from routines.utils.log_setup import setup_logging
 
 
 #log setup from /routines/utils/log_setup.py#
@@ -20,10 +19,6 @@ config.read('config/config_default.ini')
 async def MainRoutineCollectMail():
     whocallthisfunction = "MainRoutineCollectMail"  
     TimeWaitCollectMails = config.getint('MainRoutineCollectMail', 'TimeWaitCollectMails')
-    MailboxPositionWindow1X = config.getint('MainRoutineCollectMail', 'MailboxPositionWindow1X')
-    MailboxPositionWindow1y = config.getint('MainRoutineCollectMail', 'MailboxPositionWindow1y')
-    TSMOpenAllMailWindow1X = config.getint('MainRoutineCollectMail', 'TSMOpenAllMailWindow1X')
-    TSMOpenAllMailWindow1Y = config.getint('MainRoutineCollectMail', 'TSMOpenAllMailWindow1Y')
     logging.info ("[MainRoutineCollectMail] CollectMails Main Routine")
     logging.debug ("[MainRoutineCollectMail] Debug mode enabled")
     logging.debug("[MainRoutineCollectMail] Start of MainRoutineCollectMail")
@@ -36,12 +31,12 @@ async def MainRoutineCollectMail():
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
     logging.info ("[MainRoutineCollectMail] Interact with Mailbox")
-    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"right", 1, MailboxPositionWindow1X, MailboxPositionWindow1y, 2)
+    result = await SubRoutineClickMailBox(whocallthisfunction)
     if not result:
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
     logging.info ("[MainRoutineCollectMail] Click - 'OPEN ALL MAIL' TSM Addon Button")
-    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMOpenAllMailWindow1X, TSMOpenAllMailWindow1Y, 2)
+    result = await SubRoutineClickTSMOpenAllMail(whocallthisfunction)
     if not result:
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
@@ -58,13 +53,8 @@ async def MainRoutineCollectMail():
 
 async def MainRoutinePostAuctions():
     whocallthisfunction = "MainRoutinePostAuctions"
-    TSMRunPostScanButtonWindow1X = config.getint('MainRoutinePostAuctions', 'TSMRunPostScanButtonWindow1X')
-    TSMRunPostScanButtonWindow1Y = config.getint('MainRoutinePostAuctions', 'TSMRunPostScanButtonWindow1Y')
     TimeKeepPressingTSMPostCancelButtonForPost = config.getint('MainRoutinePostAuctions', 'TimeKeepPressingTSMPostCancelButtonForPost')
     TimeWaitPostScan = config.getint('MainRoutinePostAuctions', 'TimeWaitPostScan')
-    TSMAuctioningTabWindow1X = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1X')
-    TSMAuctioningTabWindow1Y = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1Y')
-    TSMAuctioningTabWindow1Y = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1Y')
     logging.info("[MainRoutinePostAuctions] Post Auctions Main Routine")
     logging.debug ("[MainRoutinePostAuctions] Debug mode enabled")
     logging.debug ("[MainRoutinePostAuctions] Start of MainRoutinePostAuctions")
@@ -82,12 +72,12 @@ async def MainRoutinePostAuctions():
         return False
     await asyncio.sleep(2)
     logging.info ("[MainRoutinePostAuctions] Click TSM 'Auctioning' tab")
-    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMAuctioningTabWindow1X, TSMAuctioningTabWindow1Y, 2)
+    result = await SubRoutineTsmClickAuctioningTab(whocallthisfunction)
     if not result:
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
     logging.info ("[MainRoutinePostAuctions] Click TSM 'Run Post Scan' button")
-    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMRunPostScanButtonWindow1X, TSMRunPostScanButtonWindow1Y, 2)
+    result = await SubRoutineTsmClickRunPostScanButton(whocallthisfunction)
     if not result:
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
@@ -124,10 +114,6 @@ async def MainRoutineCancelScanAuctions():
     whocallthisfunction = "MainRoutineCancelScanAuctions"
     TimeWaitCancelScan = config.getint('MainRoutineCancelScanAuctions', 'TimeWaitCancelScan')
     TimeKeepPressingTSMPostCancelButtonForCancel = config.getint('MainRoutineCancelScanAuctions', 'TimeKeepPressingTSMPostCancelButtonForCancel')
-    TSMRunCancelScanButtonWindow1X = config.getint('MainRoutineCancelScanAuctions', 'TSMRunCancelScanButtonWindow1X')
-    TSMRunCancelScanButtonWindow1Y = config.getint('MainRoutineCancelScanAuctions', 'TSMRunCancelScanButtonWindow1Y')
-    TSMAuctioningTabWindow1X = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1X')
-    TSMAuctioningTabWindow1Y = config.getint('GeneralSettings', 'TSMAuctioningTabWindow1Y')
     logging.info("[MainRoutineCancelScanAuctions] Cancel Auctions Main Routine")
     logging.debug ("[MainRoutineCancelScanAuctions] Debug mode enabled")
     logging.debug ("[MainRoutineCancelScanAuctions] Start of MainRoutineCancelScanAuctions")
@@ -145,12 +131,12 @@ async def MainRoutineCancelScanAuctions():
         return False
     await asyncio.sleep(2)
     logging.info ("[MainRoutineCancelScanAuctions] Click TSM 'Auctioning' tab")
-    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMAuctioningTabWindow1X, TSMAuctioningTabWindow1Y, 2)
+    result = await SubRoutineTsmClickAuctioningTab(whocallthisfunction)
     if not result:
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False
     logging.info ("[MainRoutineCancelScanAuctions] Click TSM 'Run Cancel Scan' button")
-    result = await BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,"left", 1, TSMRunCancelScanButtonWindow1X, TSMRunCancelScanButtonWindow1Y, 2)
+    result = await SubRoutineTsmClickRunCancelScanButton(whocallthisfunction)
     if not result:
         logging.critical(f"[{whocallthisfunction}] -> Closing APP")
         return False

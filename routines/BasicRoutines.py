@@ -6,6 +6,7 @@ import win32con
 import win32api
 import time
 import win32con
+import asyncio
 from .utils.log_setup import setup_logging
 from .utils.utilities import CriticalError
 
@@ -45,7 +46,12 @@ def BasicRoutineGetInfoAllWowWindows():
             hwnd = win32gui.FindWindowEx(None, hwnd, None, None)  # Get the handle of the next window
     return wow_windows  # Return the dictionary with WoW window information
 
-async def BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,mouse_button, window_number, x, y, click_count):
+import logging
+import time
+import pyautogui
+
+
+async def BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction, mouse_button, window_number, x, y, click_count):
     thisroutinename = "BasicRoutineSendMouseClickAllWowWindows"
     logging.debug("[BasicRoutineSendMouseClickAllWowWindows] Debug mode enabled")    
     if not isinstance(mouse_button, str) or mouse_button.lower() not in ["left", "right"]:
@@ -64,23 +70,19 @@ async def BasicRoutineSendMouseClickAllWowWindows(whocallthisfunction,mouse_butt
     if window_number not in wow_windows:
         logging.critical(f"[{whocallthisfunction}]->[{thisroutinename}] = The window {window_number} was not found.")
         return False
-    mouse_button_event = win32con.MOUSEEVENTF_LEFTDOWN if mouse_button.lower() == "left" else win32con.MOUSEEVENTF_RIGHTDOWN
-    mouse_button_event_up = win32con.MOUSEEVENTF_LEFTUP if mouse_button.lower() == "left" else win32con.MOUSEEVENTF_RIGHTUP
-    initial_mouse_pos = win32api.GetCursorPos()
+    button = "left" if mouse_button.lower() == "left" else "right"
+    initial_mouse_pos = pyautogui.position()
     for _ in range(click_count):
         for window_num, window in wow_windows.items():
             window_x = window["x"] + int(x * window["width"] / wow_windows[window_number]["width"])
             window_y = window["y"] + int(y * window["height"] / wow_windows[window_number]["height"])
-            win32api.SetCursorPos((window_x, window_y))
-            for i in range(2):
-                win32api.mouse_event(mouse_button_event, 0, 0, 0, 0)
-                time.sleep(0.1)
-                win32api.mouse_event(mouse_button_event_up, 0, 0, 0, 0)
-            time.sleep(0.1)
+            pyautogui.click(window_x, window_y, button=button)
+            time.sleep(0.3)
             logging.debug(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] Clicking with {mouse_button} mouse button in the windows {window_num} at position {window_x - window['x']},{window_y - window['y']}")
+        # Return mouse to initial position after clicking in all windows
         time.sleep(0.5)
         logging.debug(f"[{whocallthisfunction}]->[BasicRoutineSendMouseClickAllWowWindows] Returning mouse to initial position")
-        win32api.SetCursorPos(initial_mouse_pos)
+        pyautogui.moveTo(initial_mouse_pos)
     return True
 
 async def BasicRoutineSendKeyAllWowWindows(whocallthisfunction,window_number, key, key_press_count):
